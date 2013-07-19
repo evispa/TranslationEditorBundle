@@ -1,7 +1,7 @@
 {
     "name":         "nercury/translation-editor-bundle",
     "homepage":     "https://github.com/Nercury/TranslationEditorBundle",
-    "description":  "Translation editor form.",
+    "description":  "Translation editor form. Defines a form type to edit localized object translations.",
     "keywords":     ["translations","translation","locales"],
     "type":         "symfony-bundle",
     "license":      "Apache",
