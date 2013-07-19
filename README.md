@@ -3,7 +3,7 @@ What it is
 
 It is a translation editor form.
 
-![Translation editor example](nercury.github.com/translation-editor-bundle/Resources/public/images/translations-preview.jpg)
+![Translation editor example](https://github.com/Nercury/TranslationEditorBundle/blob/master/Resources/public/images/translations-preview.jpg?raw=true)
 
 Using it with array
 ===================
