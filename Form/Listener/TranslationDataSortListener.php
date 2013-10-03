@@ -11,9 +11,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * Sorts translation locales in correct order, appends missing locale entities.
@@ -38,7 +35,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
     private $locales;
 
     /**
-     * @var PropertyAccessorInterface
+     * @var \Nercury\TranslationEditorBundle\Form\PropertyAccessor
      */
     private $propertyAccessor;
 
@@ -73,21 +70,30 @@ class TranslationDataSortListener implements EventSubscriberInterface
         $objectManager = null,
         $autoRemoveIgnoreFields = array()
     ) {
+        $this->propertyAccessor = new \Nercury\TranslationEditorBundle\Form\PropertyAccessor();
         $this->localePropertyPath = $localePropertyPath;
         $this->itemDataClass = $itemDataClass;
         $this->nullLocaleEnabled = $nullLocaleEnabled;
         $this->locales = $locales;
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+
         $this->objectManager = $objectManager;
         $this->autoRemoveIgnoreFields = $autoRemoveIgnoreFields;
     }
 
     public static function getSubscribedEvents()
     {
-        return array(
+        $events = array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::POST_SUBMIT => 'postSubmit',
+            FormEvents::POST_BIND => 'postSubmit',
         );
+
+        if (defined('Symfony\Component\Form\FormEvents::POST_SUBMIT')) {
+            $events[FormEvents::POST_SUBMIT] = 'postSubmit';
+        } else {
+            $events[FormEvents::POST_BIND] = 'postSubmit';
+        }
+
+        return $events;
     }
 
     private function getParentDataObject($form) {
@@ -305,15 +311,15 @@ class TranslationDataSortListener implements EventSubscriberInterface
 
             if ($fieldMapping['nullable']) {
                 if ($fieldMapping['type'] === 'string') {
-                    $nullableStringProperties[] = new PropertyPath($fieldMapping['fieldName']);
+                    $nullableStringProperties[] = $fieldMapping['fieldName'];
                 } else {
-                    $otherProperties[] = new PropertyPath($fieldMapping['fieldName']);
+                    $otherProperties[] = new $fieldMapping['fieldName'];
                 }
             } else {
                 if ($fieldMapping['type'] === 'string') {
-                    $notNullableStringProperties[] = new PropertyPath($fieldMapping['fieldName']);
+                    $notNullableStringProperties[] = $fieldMapping['fieldName'];
                 } else {
-                    $otherProperties[] = new PropertyPath($fieldMapping['fieldName']);
+                    $otherProperties[] = $fieldMapping['fieldName'];
                 }
             }
         }

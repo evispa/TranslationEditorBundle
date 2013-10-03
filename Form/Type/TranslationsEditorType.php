@@ -83,12 +83,22 @@ class TranslationsEditorType extends AbstractType
 
         // Resize form listener is used to create forms for each collection entity.
 
-        $resizeListener = new ResizeFormListener(
-            $options['type'],
-            $options['options'],
-            false,
-            false
-        );
+        if (defined('Symfony\Component\Form\FormEvents::POST_SUBMIT')) {
+            $resizeListener = new ResizeFormListener(
+                $options['type'],
+                $options['options'],
+                false,
+                false
+            );
+        } else {
+            $resizeListener = new ResizeFormListener(
+                $builder->getFormFactory(),
+                $options['type'],
+                $options['options'],
+                false,
+                false
+            );
+        }
 
         $builder->addEventSubscriber($resizeListener);
     }
