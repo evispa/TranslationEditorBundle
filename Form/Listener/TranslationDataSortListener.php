@@ -313,7 +313,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
                 if ($fieldMapping['type'] === 'string') {
                     $nullableStringProperties[] = $fieldMapping['fieldName'];
                 } else {
-                    $otherProperties[] = new $fieldMapping['fieldName'];
+                    $otherProperties[] = $fieldMapping['fieldName'];
                 }
             } else {
                 if ($fieldMapping['type'] === 'string') {
