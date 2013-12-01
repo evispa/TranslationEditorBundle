@@ -45,7 +45,7 @@ This view uses helper classes.
                 </a>
             {% endfor %}
             <a class="lang_open db fl mr10 pl9 bl1 {{ current_selected_lang == '__all__' ? 'c0 a0 fwb' : 'a2' }}" href="javascript:;">
-                {{ 'cms.fields.translations.expand_languages' | trans }}
+                {{ 'expand_languages' | trans({}, 'NercuryTranslationEditorBundle') }}
             </a>
         </div>
         <div class="clear"><!-- --></div>
