@@ -127,7 +127,12 @@ class AcmeTranslation
      *
      * @ORM\ManyToOne(targetEntity="Example\AcmeBundle\Entity\Acme", inversedBy="translations")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="acme_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     *   @ORM\JoinColumn(
+     *       name="acme_id", 
+     *       referencedColumnName="id", 
+     *       onDelete="CASCADE", 
+     *       nullable=false
+     *   )
      * })
      */
     private $acme;
@@ -157,10 +162,12 @@ class AcmeTranslation
 or array:
 ```php
 array(
-	'translations' => array(
-		'lang' => 'en',
-		'title' => 'Acme',
-		'description' => 'Acme description',
-	)
+    'translations' => array(
+        array(
+            'lang' => 'en',
+            'title' => 'Acme',
+            'description' => 'Acme description',
+        )
+    )
 );
 ```
