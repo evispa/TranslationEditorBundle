@@ -86,3 +86,81 @@ Javascript
 ```
 @NercuryTranslationEditorBundle/Resources/public/js/translations_form.js
 ```
+
+Example
+==========
+```php
+namespace Example\AcmeBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="acme")
+ */
+class Acme
+{
+	/**
+     * @var \Doctrine\Common\Collections\ArrayCollection|AcmeTranslation[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="Example\AcmeBundle\Entity\AcmeTranslation", 
+     *      mappedBy="acme", 
+     *      cascade={"persist", "remove"}
+     * )
+     */
+    private $translations;
+}
+
+namespace Example\AcmeBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="acme_translations")
+ */
+class AcmeTranslation
+{
+	/**
+     * @var Acme $acme
+     *
+     * @ORM\ManyToOne(targetEntity="Example\AcmeBundle\Entity\Acme", inversedBy="translations")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="acme_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * })
+     */
+    private $acme;
+
+	/**
+     * @var string $lang
+     *
+     * @ORM\Column(name="lang", type="string", length=31, nullable=false)
+     */
+    private $lang;
+
+    /**
+     * @var string $title
+     *
+     * @ORM\Column(name="title", type="string", length=255, nullable=false)
+     */
+    private $title;
+
+    /**
+     * @var string $description
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
+     */
+    private $description;
+}
+```
+or array:
+```php
+array(
+	'translations' => array(
+		'lang' => 'en',
+		'title' => 'Acme',
+		'description' => 'Acme description',
+	)
+);
+```
