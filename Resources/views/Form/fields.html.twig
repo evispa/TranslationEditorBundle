@@ -1,69 +1,79 @@
 {# Symfony/Bridge/Twig/Resources/views/Form/form_div_layout.html.twig #}
 
 {% block translations_widget %}
-{% spaceless %}
-{#
+    {% spaceless %}
+        {#
+            This view uses helper classes.
 
-This view uses helper classes.
+            .dn { display:none!important }
+            .db { display:block!important }
+            .fwb { font-weight:700!important }
+            .a0 { text-decoration: none }
+            .c0 {color:#555 !important }
+            .fl { float:left!important }
+            .clear { clear:both; display:block; height:0; overflow:hidden; visibility:hidden; width:0 }
+            .mt5 { margin-top: 5px }
+            .mt10 { margin-top: 10px }
+            .mr10 { margin-right: 10px }
+            .mb5 { margin-bottom: 5px }
+            .pl9 { padding-left: 9px }
+            .bl1 { border-left: 1px solid }
+            .bb1 { border-bottom: 1px solid }
+        #}
 
-.dn { display:none!important }
-.db { display:block!important }
-.fwb { font-weight:700!important }
-.a0 { text-decoration: none }
-.c0 {color:#555 !important }
-.fl { float:left!important }
-.clear { clear:both; display:block; height:0; overflow:hidden; visibility:hidden; width:0 }
-.mt5 { margin-top: 5px }
-.mt10 { margin-top: 10px }
-.mr10 { margin-right: 10px }
-.mb5 { margin-bottom: 5px }
-.pl9 { padding-left: 9px }
-.bl1 { border-left: 1px solid }
-.bb1 { border-bottom: 1px solid }
+        <div id="{{ form.vars.id }}_wrap">
 
-#}
+            {% set childs_it = form.iterator() %}
+            {% set _ = childs_it.rewind() %}
 
-<div id="{{ form.vars.id }}_wrap">
-    {% set childs_it = form.iterator() %}
-    {% set _ = childs_it.rewind() %}
+            {% if form.vars.null_locale_enabled and childs_it.valid() %}
+                <div class="no_lang_wrap {{ form.vars.null_locale_selected == true ? '' : 'dn' }}">
 
-    {% if form.vars.null_locale_enabled and childs_it.valid() %}
-        <div class="no_lang_wrap {{ form.vars.null_locale_selected == true ? '' : 'dn' }}">
+                    {% set child = childs_it.current() %}
+                    {% set _ = childs_it.next() %}
 
-            {% set child = childs_it.current() %}
-            {% set _ = childs_it.next() %}
-
-            {{ form_widget(child) }}
-        </div>
-    {% endif %}
-
-    <div class="other_lang_wrap {{ form.vars.null_locale_selected ? 'dn' : '' }}">
-        <div class="translation_lang_select fl mt5">
-            {% for locale, locale_title in form.vars.locale_titles %}
-                <a class="lang_select db fl mr10 pl9 bl1 {{ current_selected_lang == locale ? 'c0 a0 fwb' : 'a2' }}" data-lang="{{ locale }}" href="javascript:;">
-                    {{ locale_title }} ({{ locale }})
-                </a>
-            {% endfor %}
-            <a class="lang_open db fl mr10 pl9 bl1 {{ current_selected_lang == '__all__' ? 'c0 a0 fwb' : 'a2' }}" href="javascript:;">
-                {{ 'expand_languages' | trans({}, 'NercuryTranslationEditorBundle') }}
-            </a>
-        </div>
-        <div class="clear"><!-- --></div>
-        <div class="translation_lang_forms fl bl1 pl9">
-            {% for locale, locale_title in form.vars.locale_titles %}
-                {% set locale_form = childs_it.current() %}
-                {% set _ = childs_it.next() %}
-
-                <div class="form_wrap {{ (current_selected_lang == locale or current_selected_lang == '__all__') ? '' : 'dn' }}" data-lang="{{ locale }}">
-                    <div class="language_label {{ current_selected_lang == '__all__' ? '' : 'dn' }} fwb mt10 mb5 bb1">{{ locale_title }} ({{ locale }})</div>
-                    {{ form_errors(locale_form) }}
-                    {{ form_widget(locale_form) }}
+                    {{ form_widget(child) }}
                 </div>
-            {% endfor %}
-            <div class="clear"><!-- --></div>
+            {% endif %}
+
+            <div class="other_lang_wrap {{ form.vars.null_locale_selected ? 'dn' : '' }}">
+                <div class="translation_lang_select fl mt5">
+                    {% for locale, locale_title in form.vars.locale_titles %}
+                        <a class="lang_select db fl mr10 pl9 bl1 {{ current_selected_lang == locale ? 'c0 a0 fwb' : 'a2' }}"
+                           data-lang="{{ locale }}" href="javascript:;">
+                            {{ locale_title }} ({{ locale }})
+                        </a>
+                    {% endfor %}
+                    <a class="lang_open db fl mr10 pl9 bl1 {{ current_selected_lang == '__all__' ? 'c0 a0 fwb' : 'a2' }}"
+                       href="javascript:;">
+                        {{ 'expand_languages' | trans({}, 'NercuryTranslationEditorBundle') }}
+                    </a>
+                </div>
+                <div class="clear"><!-- --></div>
+
+                {% if form.vars.form_all_errors is not empty %}
+                    {% include 'NercuryTranslationEditorBundle:Form:all_errors.html.twig' with {locale_titles: form.vars.locale_titles, form_all_errors: form.vars.form_all_errors} %}
+                    <div class="clear"><!-- --></div>
+                {% endif %}
+
+                <div class="translation_lang_forms fl bl1 pl9">
+                    {% for locale, locale_title in form.vars.locale_titles %}
+                        {% set locale_form = childs_it.current() %}
+                        {% set _ = childs_it.next() %}
+
+                        <div class="form_wrap {{ (current_selected_lang == locale or current_selected_lang == '__all__') ? '' : 'dn' }}"
+                             data-lang="{{ locale }}">
+                            <div class="language_label {{ current_selected_lang == '__all__' ? '' : 'dn' }} fwb mt10 mb5 bb1">{{ locale_title }}
+                                ({{ locale }})
+                            </div>
+                            {{ form_errors(locale_form) }}
+                            {{ form_widget(locale_form) }}
+                        </div>
+                    {% endfor %}
+                    <div class="clear"><!-- --></div>
+                </div>
+                <div class="clear"><!-- --></div>
+            </div>
         </div>
-        <div class="clear"><!-- --></div>
-    </div>
-</div>
-{% endspaceless %}
+    {% endspaceless %}
 {% endblock %}

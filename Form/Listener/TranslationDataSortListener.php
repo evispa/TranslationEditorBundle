@@ -303,7 +303,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
                 continue;
             }
 
-            if ((true === isset($fieldMapping['nullable'])) && $fieldMapping['nullable']) {
+            if ($fieldMapping['nullable']) {
                 if ($fieldMapping['type'] === 'string') {
                     $nullableStringProperties[] = new PropertyPath($fieldMapping['fieldName']);
                 } else {
