@@ -275,7 +275,6 @@ class TranslationDataSortListener implements EventSubscriberInterface
         $options = $event->getForm()->getConfig()->getOptions();
 
         if ((null !== $this->itemDataClass)  && (true == $options['auto_remove_empty_translations'])) {
-            var_dump($data); die;
             $itemMetadata = $this->getClassMetadata($this->itemDataClass);
             if (null !==  $itemMetadata) {
                 $this->cleanupCollection($data, $itemMetadata);
