@@ -1,6 +1,6 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
-    $(document).on('click', '.other_lang_wrap a', function() {
+    $(document).on('click', '.translation_lang_select a', function () {
         var $a = $(this);
         var lang = $a.data('lang');
         $a.parents('div.translation_lang_select:first').find('a').removeClass('c0 a0 fwb').addClass('a2');
@@ -15,12 +15,14 @@ $(document).ready(function() {
             $forms.find('.form_wrap[data-lang="' + lang + '"]').removeClass('dn');
         }
         $.cookie("current_selected_translation_lang", !lang ? '__all__' : lang, {path: '/', expires: 7});
+
+        $('.translation_editor_all_errors').remove();
     });
 
     /*
      * Is translatable changer
      */
-    var change_translations_locale_visibility = function($wrap, is_translatable) {
+    var change_translations_locale_visibility = function ($wrap, is_translatable) {
         if (is_translatable === true) {
             $('.no_lang_wrap', $wrap).addClass('dn');
             $('.no_lang_wrap input', $wrap).val('');
@@ -32,7 +34,7 @@ $(document).ready(function() {
         }
     };
 
-    var translations_locale_visibility_trigger = function($el) {
+    var translations_locale_visibility_trigger = function ($el) {
         var $wrap = $('#' + $el.data('translations-name') + '_wrap');
 
         if ($el.is(':checked')) {
@@ -42,10 +44,13 @@ $(document).ready(function() {
         }
     };
 
-    $('input[data-is-translatable-changer=1]').each(function() {
+    $('input[data-is-translatable-changer=1]').each(function () {
         translations_locale_visibility_trigger($(this));
-    }).change(function() {
+    }).change(function () {
         translations_locale_visibility_trigger($(this));
     });
 
+    $('.translation_editor_remove_all_errors').click(function () {
+        $('.translation_editor_all_errors').remove();
+    });
 });

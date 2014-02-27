@@ -2,6 +2,7 @@
 
 namespace Nercury\TranslationEditorBundle\Form\Type;
 
+use Nercury\TranslationEditorBundle\Form\Listener\TranslationDataSortListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,12 +10,27 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Form type used for editing translation collection for specified locales.
  */
 class TranslationsEditorType extends AbstractType
 {
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * Set translator.
+     *
+     * @param TranslatorInterface $translator
+     */
+    public function setTranslator(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * @var \Symfony\Bridge\Doctrine\RegistryInterface
@@ -50,6 +66,7 @@ class TranslationsEditorType extends AbstractType
     protected function getRequestLocale()
     {
         $request = $this->getRequest();
+
         return null === $request ? $this->container->getParameter('locale') : $request->getLocale();
     }
 
@@ -70,7 +87,7 @@ class TranslationsEditorType extends AbstractType
 
         // Translation data sort listener is used to sort and add missing entities in the list based on the locales.
 
-        $translationDataSorter = new \Nercury\TranslationEditorBundle\Form\Listener\TranslationDataSortListener(
+        $translationDataSorter = new TranslationDataSortListener(
             $options['locale_field_name'],
             $prototype->getDataClass(),
             $options['locales'],
@@ -124,15 +141,64 @@ class TranslationsEditorType extends AbstractType
                 null
             );
             $selectedLanguageIsNotValid = $current_selected_lang !== '__all__' && !in_array(
-                $current_selected_lang,
-                $options['locales']
-            );
+                    $current_selected_lang,
+                    $options['locales']
+                );
             if ($current_selected_lang === null || $selectedLanguageIsNotValid) {
                 $current_selected_lang = $options['locales'][0];
             }
         }
 
         $view->vars['current_selected_lang'] = $current_selected_lang;
+
+        $view->vars['form_all_errors'] = array();
+        if ((true === $options['all_errors']) && (1 < count($options['locales']))) {
+            $view->vars['form_all_errors'] = $this->getErrorMessages($form, $view);
+        }
+    }
+
+    /**
+     * Get error messages.
+     *
+     * @param FormInterface $form
+     * @param FormView $view
+     *
+     * @return array
+     */
+    private function getErrorMessages(FormInterface $form, FormView $view)
+    {
+        $errors = array();
+
+        foreach ($form->getErrors() as $key => $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        $viewChildren = array();
+        if (null !== $view) {
+            $viewChildren = $view->children;
+        }
+
+        /** @var FormInterface $child */
+        foreach ($form->all() as $key => $child) {
+            if (!$child->isValid() && $child->isSubmitted()) {
+                $label = null;
+                $viewChild = (true === isset($viewChildren[$key])) ? $viewChildren[$key] : null;
+
+                if ((null !== $viewChild) && $viewChildren[$key]->vars['label']) {
+                    $label = $viewChildren[$key]->vars['label'];
+                    if ($translationDomain = $viewChildren[$key]->vars['translation_domain']) {
+                        $label = $this->translator->trans($label, array(), $translationDomain);
+                    }
+                }
+
+                $errors[$child->getName()] = array(
+                    'label' => $label,
+                    'errors' => $this->getErrorMessages($child, $viewChild),
+                );
+            }
+        }
+
+        return $errors;
     }
 
     protected function getDefaultEditorLocales()
@@ -147,6 +213,7 @@ class TranslationsEditorType extends AbstractType
     {
         $optionsNormalizer = function (Options $options, $value) {
             $value['block_name'] = 'entry';
+
             return $value;
         };
 
@@ -171,6 +238,7 @@ class TranslationsEditorType extends AbstractType
                 'auto_remove_empty_translations' => true,
                 'auto_remove_ignore_fields' => array('created_at', 'updated_at'),
                 'error_bubbling' => false,
+                'all_errors' => false,
             )
         );
 

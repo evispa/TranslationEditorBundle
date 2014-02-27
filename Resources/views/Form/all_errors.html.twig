@@ -1,0 +1,24 @@
+<div class="translation_editor_all_errors">
+    {% for locale, locale_title in locale_titles %}
+        <div class="fl fwb">{{ locale_title }} ({{ locale }}):</div>
+        <div class="fl ml5">
+            {% set form_current_errors = form_all_errors[loop.index0] is defined ? form_all_errors[loop.index0] : {} %}
+            {% for current_errors in form_current_errors %}
+                {% for errors in current_errors %}
+                    <span>{{ errors['label'] }}</span>
+                    <ul>
+                        {% for error in errors['errors'] %}
+                            <li>
+                                {{ error }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="clear"><!-- --></div>
+    {% endfor %}
+    <a class="translation_editor_remove_all_errors" href="javascript:;">
+        {{ 'remove_all_errors'|trans({}, 'NercuryTranslationEditorBundle') }}
+    </a>
+</div>

@@ -1,0 +1,19 @@
+.translation_editor_all_errors {
+    padding-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    float: left;
+    color: #DF451E;
+    clear: both;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+}
+
+.translation_editor_all_errors li {
+    font-style: italic;
+}
+
+.translation_editor_remove_all_errors {
+    margin-bottom: 5px;
+    float: left;
+}
