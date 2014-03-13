@@ -279,10 +279,11 @@ class TranslationDataSortListener implements EventSubscriberInterface
     public function postSubmit(FormEvent $event)
     {
         $data = $event->getData();
+        $options = $event->getForm()->getConfig()->getOptions();
 
-        if ($this->itemDataClass !== null) {
+        if ((null !== $this->itemDataClass)  && (true == $options['auto_remove_empty_translations'])) {
             $itemMetadata = $this->getClassMetadata($this->itemDataClass);
-            if ($itemMetadata !== null) {
+            if (null !==  $itemMetadata) {
                 $this->cleanupCollection($data, $itemMetadata);
             }
         }
@@ -310,7 +311,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
                 continue;
             }
 
-            if ((true === isset($fieldMapping['nullable'])) && $fieldMapping['nullable']) {
+            if (isset($fieldMapping['nullable']) && $fieldMapping['nullable']) {
                 if ($fieldMapping['type'] === 'string') {
                     $nullableStringProperties[] = new PropertyPath($fieldMapping['fieldName']);
                 } else {
@@ -321,6 +322,21 @@ class TranslationDataSortListener implements EventSubscriberInterface
                     $notNullableStringProperties[] = new PropertyPath($fieldMapping['fieldName']);
                 } else {
                     $otherProperties[] = new PropertyPath($fieldMapping['fieldName']);
+                }
+            }
+        }
+
+        // Clean null elements from collection.
+        if (is_array($collection)) {
+            foreach ($collection as $key => $item) {
+                if (null === $item) {
+                    unset($collection[$key]);
+                }
+            }
+        } else {
+            foreach ($collection as $item) {
+                if (null === $item) {
+                    $collection->removeElement($item);
                 }
             }
         }
@@ -393,4 +409,3 @@ class TranslationDataSortListener implements EventSubscriberInterface
         }
     }
 }
-
