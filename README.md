@@ -89,6 +89,8 @@ Javascript
 
 Example
 ==========
+
+Example doctrine entity:
 ```php
 namespace Example\AcmeBundle\Entity;
 
@@ -158,16 +160,4 @@ class AcmeTranslation
      */
     private $description;
 }
-```
-or array:
-```php
-array(
-    'translations' => array(
-        array(
-            'lang' => 'en',
-            'title' => 'Acme',
-            'description' => 'Acme description',
-        )
-    )
-);
 ```
