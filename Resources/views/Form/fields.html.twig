@@ -22,7 +22,7 @@
         #}
 
         <div id="{{ form.vars.id }}_wrap">
-
+			{{ form_errors(form) }}
             {% set childs_it = form.iterator() %}
             {% set _ = childs_it.rewind() %}
 
