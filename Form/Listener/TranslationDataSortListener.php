@@ -150,11 +150,13 @@ class TranslationDataSortListener implements EventSubscriberInterface
     {
         $form = $event->getForm();
         $data = $event->getData();
+        $localePropertyPath = $this->localePropertyPath;
 
         if ($data instanceof Collection) {
             $dataInArray = false;
         } else {
             $dataInArray = true;
+            $localePropertyPath = '[' . $this->localePropertyPath . ']';
         }
 
         if ($dataInArray && !is_array($data)) {
@@ -167,7 +169,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
         // Find existing translations.
 
         foreach ($existingData as $dataItem) {
-            $locale = $this->propertyAccessor->getValue($dataItem, $this->localePropertyPath);
+            $locale = $this->propertyAccessor->getValue($dataItem, $localePropertyPath);
             if (null === $locale) {
                 $existingItemsByLang['__'] = $dataItem;
             } else {
@@ -208,7 +210,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
                         $newItem = $r->newInstanceArgs();
                     }
 
-                    $this->propertyAccessor->setValue($newItem, $this->localePropertyPath, '__' === $locale ? null : $locale);
+                    $this->propertyAccessor->setValue($newItem, $localePropertyPath, '__' === $locale ? null : $locale);
                     $data[] = $newItem;
                 }
             }
@@ -261,7 +263,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
                         }
                     }
 
-                    $this->propertyAccessor->setValue($newItem, $this->localePropertyPath, '__' === $locale ? null : $locale);
+                    $this->propertyAccessor->setValue($newItem, $localePropertyPath, '__' === $locale ? null : $locale);
                     $data[] = $newItem;
                 }
             }
