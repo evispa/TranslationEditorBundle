@@ -156,7 +156,7 @@ class TranslationDataSortListener implements EventSubscriberInterface
             $dataInArray = false;
         } else {
             $dataInArray = true;
-            $localePropertyPath = '[' . $this->localePropertyPath . ']';
+            $localePropertyPath = '[' . rtrim(ltrim($localePropertyPath, '['), ']') . ']';
         }
 
         if ($dataInArray && !is_array($data)) {
