@@ -40,7 +40,8 @@
             <div class="other_lang_wrap {{ form.vars.null_locale_selected ? 'dn' : '' }}">
                 <div class="translation_lang_select fl mt5">
                     {% for locale, locale_title in form.vars.locale_titles %}
-                        <a class="lang_select db fl mr10 pl9 bl1 {{ current_selected_lang == locale ? 'c0 a0 fwb' : 'a2' }}"
+                        {% set error = (not form.children[loop.index0].vars.valid) %}
+                        <a class="lang_select db fl mr10 pl9 bl1 {{ current_selected_lang == locale ? 'c0 a0 fwb' : 'a2' }} {{ error ? 'error' : '' }}"
                            data-lang="{{ locale }}" href="javascript:;">
                             {{ locale_title }} ({{ locale }})
                         </a>
