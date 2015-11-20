@@ -17,9 +17,13 @@
         "doctrine/orm": ">=2.1.0"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "Nercury\\TranslationEditorBundle": ""
         }
     },
-    "target-dir": "Nercury/TranslationEditorBundle"
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
 }
